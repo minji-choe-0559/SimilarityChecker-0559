@@ -27,6 +27,8 @@ protected:
 
 class LengthSimilarityChecker : public StringMatcher {
 public:
+	static constexpr double kLengthMaxScore = 60.0;
+
 	int CalculateScore(const std::string& a, const std::string& b) const override {
 		ValidateUppercaseAlphabet(a);
 		ValidateUppercaseAlphabet(b);
@@ -42,7 +44,7 @@ public:
 		}
 
 		double gap = static_cast<double>(longLength - shortLength);
-		double score = (1.0 - gap / longLength) * 60.0;
+		double score = (1.0 - gap / longLength) * kLengthMaxScore;
 		return static_cast<int>(std::round(score));
 	};
 };
