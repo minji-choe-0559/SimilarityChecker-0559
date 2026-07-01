@@ -1,33 +1,40 @@
 #include "gmock/gmock.h"
 #include "StringMatcher.cpp"
 
-TEST(LengthSimilarityChecker, SameLength_ReturnsFullScore) {
+class LengthSimilarityCheckerTest : public testing::Test {
+protected:
 	LengthSimilarityChecker checker;
-	EXPECT_EQ(60, checker.CalculateScore("ASD", "DSA"));
+
+	void ExpectScore(const std::string& a, const std::string& b, int expectedScore) {
+		EXPECT_EQ(expectedScore, checker.CalculateScore(a, b));
+	}
+
+	void ExpectInvalidStringException(const std::string& a, const std::string& b) {
+		EXPECT_THROW(checker.CalculateScore(a, b), InvalidStringException);
+	}
+};
+
+TEST_F(LengthSimilarityCheckerTest, SameLength_ReturnsFullScore) {
+	ExpectScore("ASD", "DSA", 60);
 }
 
-TEST(LengthSimilarityChecker, LengthDoublesOrMore_ReturnsZero) {
-	LengthSimilarityChecker checker;
-	EXPECT_EQ(0, checker.CalculateScore("A", "BB"));
+TEST_F(LengthSimilarityCheckerTest, LengthDoublesOrMore_ReturnsZero) {
+	ExpectScore("A", "BB", 0);
 }
 
-TEST(LengthSimilarityChecker, PartialGap_ReturnsPartialScore) {
-	LengthSimilarityChecker checker;
-	EXPECT_EQ(36, checker.CalculateScore("AAABB", "BAA"));
+TEST_F(LengthSimilarityCheckerTest, PartialGap_ReturnsPartialScore) {
+	ExpectScore("AAABB", "BAA", 36);
 }
 
-TEST(LengthSimilarityChecker, SmallPartialGap_ReturnsPartialScore) {
-	LengthSimilarityChecker checker;
-	EXPECT_EQ(40, checker.CalculateScore("AA", "AAE"));
+TEST_F(LengthSimilarityCheckerTest, SmallPartialGap_ReturnsPartialScore) {
+	ExpectScore("AA", "AAE", 40);
 }
 
-TEST(LengthSimilarityChecker, BothEmpty_ThrowsInvalidStringException) {
-	LengthSimilarityChecker checker;
-	EXPECT_THROW(checker.CalculateScore("", ""), InvalidStringException);
+TEST_F(LengthSimilarityCheckerTest, BothEmpty_ThrowsInvalidStringException) {
+	ExpectInvalidStringException("", "");
 }
 
-TEST(LengthSimilarityChecker, NonUppercaseInput_ThrowsInvalidStringException) {
-	LengthSimilarityChecker checker;
-	EXPECT_THROW(checker.CalculateScore("asd", "DSA"), InvalidStringException);
-	EXPECT_THROW(checker.CalculateScore("A1D", "DSA"), InvalidStringException);
+TEST_F(LengthSimilarityCheckerTest, NonUppercaseInput_ThrowsInvalidStringException) {
+	ExpectInvalidStringException("asd", "DSA");
+	ExpectInvalidStringException("A1D", "DSA");
 }
