@@ -21,7 +21,13 @@ TEST(LengthSimilarityChecker, SmallPartialGap_ReturnsPartialScore) {
 	EXPECT_EQ(40, checker.CalculateScore("AA", "AAE"));
 }
 
-TEST(LengthSimilarityChecker, BothEmpty_ReturnsFullScore) {
+TEST(LengthSimilarityChecker, BothEmpty_ThrowsInvalidStringException) {
 	LengthSimilarityChecker checker;
-	EXPECT_EQ(60, checker.CalculateScore("", ""));
+	EXPECT_THROW(checker.CalculateScore("", ""), InvalidStringException);
+}
+
+TEST(LengthSimilarityChecker, NonUppercaseInput_ThrowsInvalidStringException) {
+	LengthSimilarityChecker checker;
+	EXPECT_THROW(checker.CalculateScore("asd", "DSA"), InvalidStringException);
+	EXPECT_THROW(checker.CalculateScore("A1D", "DSA"), InvalidStringException);
 }
